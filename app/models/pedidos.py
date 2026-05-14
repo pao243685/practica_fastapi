@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Float, Integer, String, ForeignKey
+from sqlalchemy import Column, Float, Integer, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from app.db.database import Base
 from datetime import datetime
@@ -6,15 +6,14 @@ from datetime import datetime
 
 class Carrito(Base):
     __tablename__ = "carritos"
-
     id = Column(Integer, primary_key=True, index=True)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
     usuario = relationship("Usuario", back_populates="carritos")
     items = relationship("ItemCarrito", back_populates="carrito", cascade="all, delete")
 
+
 class ItemCarrito(Base):
     __tablename__ = "items_carrito"
-
     id = Column(Integer, primary_key=True, index=True)
     carrito_id = Column(Integer, ForeignKey("carritos.id"))
     producto_id = Column(Integer, ForeignKey("productos.id"))
@@ -22,18 +21,19 @@ class ItemCarrito(Base):
     carrito = relationship("Carrito", back_populates="items")
     producto = relationship("Producto")
 
+
 class Pedido(Base):
     __tablename__ = "pedidos"
-
     id = Column(Integer, primary_key=True, index=True)
     usuario_id = Column(Integer, ForeignKey("usuarios.id"))
-    fecha = Column(datetime,  default=datetime.now.utcnow)
+    fecha = Column(DateTime, default=datetime.utcnow)
     total = Column(Float)
+    usuario = relationship("Usuario", back_populates="pedidos")
     detalles = relationship("DetallePedido", back_populates="pedido")
+
 
 class DetallePedido(Base):
     __tablename__ = "detalles_pedido"
-
     id = Column(Integer, primary_key=True, index=True)
     pedido_id = Column(Integer, ForeignKey("pedidos.id"))
     producto_id = Column(Integer, ForeignKey("productos.id"))
