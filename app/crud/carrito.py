@@ -1,8 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import Session, relationship
-from app.db.database import Base
+from sqlalchemy.orm import Session
 from app.models.pedidos import Carrito, ItemCarrito
-from app.models.usuario import Usuario
 
 
 def obtener_carrito(db: Session, usuario_id: int):
@@ -13,6 +10,7 @@ def obtener_carrito(db: Session, usuario_id: int):
         db.commit()
         db.refresh(carrito)
     return carrito
+
 
 def agregar_item(db: Session, carrito_id: int, producto_id: int, cantidad: int = 1):
     item = db.query(ItemCarrito).filter(
@@ -26,10 +24,11 @@ def agregar_item(db: Session, carrito_id: int, producto_id: int, cantidad: int =
         db.add(item)
     db.commit()
     db.refresh(item)
-    return item 
+    return item
+
 
 def eliminar_item(db: Session, item_id: int):
-    item = db.query(ItemCarrito).get(item_id)
+    item = db.query(ItemCarrito).filter(ItemCarrito.id == item_id).first()
     if item:
         db.delete(item)
         db.commit()

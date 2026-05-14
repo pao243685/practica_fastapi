@@ -1,8 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
 from sqlalchemy.orm import Session
-from app.db.database import Base
-from app.models import *
+from app.models.pedidos import Carrito, Pedido, DetallePedido
 
 
 def crear_pedido(db: Session, usuario_id: int):
@@ -27,8 +24,9 @@ def crear_pedido(db: Session, usuario_id: int):
 
     db.commit()
 
-    for item in carrito.items:
+    for item in list(carrito.items):
         db.delete(item)
     db.commit()
+    db.refresh(pedido)
 
     return pedido
