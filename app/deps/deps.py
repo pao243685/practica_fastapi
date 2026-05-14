@@ -1,14 +1,12 @@
-
 from fastapi.security import OAuth2PasswordBearer
 from fastapi import Depends, HTTPException, status
 from jose import JWTError
 from sqlalchemy.orm import Session
 from app import crud
-from db import get_db
-from core.security import verificar_token
-from db.database import SessionLocal
+from app.db.database import get_db
+from app.core.security import verificar_token
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="usuarios/login")
 
 
 def get_current_user(
@@ -41,10 +39,3 @@ def require_admin(current_user=Depends(get_current_user)):
             detail="Se requiere rol admin"
         )
     return current_user
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
